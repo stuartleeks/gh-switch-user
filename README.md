@@ -5,6 +5,9 @@ An extension to make it easier to switch between GitHub accounts in the `gh` CLI
 ## Installation
 
 ```sh
+# Install direct from GitHub
+gh extension install stuartleeks/gh-switch-user
+
 # Clone and install
 git clone https://github.com/stuartleeks/gh-switch-user.git ~/.gh-switch-user
 cd ~/.gh-switch-user
