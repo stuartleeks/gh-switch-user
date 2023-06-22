@@ -48,6 +48,7 @@ if len(sys.argv) != 2:
     print("""
 Usage: gh switch-user <user> # switch to user
 or     gh switch-user --save # save current config in user-file
+or     gh switch-user --show # Show the current user
 """)
     sys.exit(1)
 
@@ -55,6 +56,10 @@ user = sys.argv[1]
 
 if user == "--save":
     save_current_config_if_updated()
+    sys.exit(0)
+
+if user == "--show":
+    print(get_current_gh_user())
     sys.exit(0)
 
 if user == get_current_gh_user():
