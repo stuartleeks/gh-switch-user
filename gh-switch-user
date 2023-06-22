@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+import os
+import sys
+import yaml
+
+
+def get_current_gh_user():
+    filename = os.path.expandvars("$HOME/.config/gh/hosts.yml")
+    with open(filename) as f:
+        hosts = yaml.load(f, Loader=yaml.FullLoader)
+        current_user = hosts["github.com"]["user"]
+        return current_user
+
+
+def get_config_content_in_use():
+    filename = os.path.expandvars("$HOME/.config/gh/hosts.yml")
+    # load contents of filename as string
+    with open(filename) as f:
+        content = f.read()
+    return content
+
+
+def get_config_content_for(user: str):
+    filename = os.path.expandvars(f"$HOME/.config/gh/hosts-{user}.yml")
+    if not os.path.exists(filename):
+        return None
+    # load contents of filename as string
+    with open(filename) as f:
+        content = f.read()
+    return content
+
+
+def save_current_config_if_updated():
+    current_user = get_current_gh_user()
+    if get_config_content_for(current_user) != get_config_content_in_use():
+        print(f"Saving current config for {current_user}")
+        filename = os.path.expandvars(f"$HOME/.config/gh/hosts-{current_user}.yml")
+        os.system(f"cp $HOME/.config/gh/hosts.yml {filename}")
+
+
+def set_current_gh_user(user: str):
+    filename = os.path.expandvars(f"$HOME/.config/gh/hosts-{user}.yml")
+    os.system(f"cp {filename} $HOME/.config/gh/hosts.yml")
+
+
+# get commandline arguments
+if len(sys.argv) != 2:
+    print("""
+Usage: gh switch-user <user> # switch to user
+or     gh switch-user --save # save current config in user-file
+""")
+    sys.exit(1)
+
+user = sys.argv[1]
+
+if user == "--save":
+    save_current_config_if_updated()
+    sys.exit(0)
+
+if user == get_current_gh_user():
+    print(f"Already logged in as {user}")
+    sys.exit(0)
+
+
+save_current_config_if_updated()
+set_current_gh_user(user)
